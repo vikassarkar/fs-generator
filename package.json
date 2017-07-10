@@ -1,15 +1,22 @@
 {
-  "name": "auto-folder",
+  "name": "fs-generator",
   "version": "1.0.0",
   "description": "Create your folders automatically, on single command.",
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "create": "index.js"
+    "create": "node index.js"
   },
   "keywords": [
     "npm-fs"
   ],
+  "repository" :{ 
+    "type" : "git",
+    "url" : "https://github.com/vikassarkar/fs-generator"
+  },
+  "engines" : { 
+    "node" : ">=6.11.10" 
+  },
   "author": "vikas sarkar",
-  "license": "ISC"
+  "license": "MIT"
 }
