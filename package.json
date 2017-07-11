@@ -1,6 +1,6 @@
 {
   "name": "fs-generator",
-  "version": "1.0.1",
+  "version": "2.0.0",
   "description": "Create your folders automatically, on single command.",
   "main": "index.js",
   "scripts": {
@@ -8,15 +8,22 @@
     "create": "node index.js"
   },
   "keywords": [
-    "npm-fs"
+    "npm-fs",
+    "npm-fs-extra"
   ],
-  "repository" :{ 
-    "type" : "git",
-    "url" : "https://github.com/vikassarkar/fs-generator"
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/vikassarkar/fs-generator"
   },
-  "engines" : { 
-    "node" : ">=6.11.10" 
+  "engines": {
+    "node": ">=6.11.10"
   },
   "author": "vikas sarkar",
-  "license": "MIT"
+  "license": "MIT",
+  "dependencies": {
+    "fs": "0.0.1-security",
+    "fs-extra": "^3.0.1",
+    "lodash": "^4.17.4",
+    "q": "^1.5.0"
+  }
 }
