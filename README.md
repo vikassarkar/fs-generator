@@ -128,6 +128,13 @@ path of folder should be absolute path.
     }, ......
 ```
 
+## Available font-cases
+
+ - camelLowerCase
+ - camelUpperCase
+ - lowercaseHyphenSeprated
+ - uppercaseHyphenSeprated
+
 ## Todo
 
 - [ ] Add a example
