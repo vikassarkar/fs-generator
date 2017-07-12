@@ -41,7 +41,7 @@ path of folder should be absolute path.
             //font-case
             "lowercaseHyphenSeprated", 
             //name prefix
-            "usage-",
+            "example-",
             //name suffix
             "-widget"
         ],
@@ -89,7 +89,7 @@ path of folder should be absolute path.
             },
             "WidgetName.tsx": [
                 "camelUpperCase",
-                "Usage",
+                "Example",
                 "Widget"
             ]
         },
@@ -111,7 +111,7 @@ path of folder should be absolute path.
             ],
             "widget-folder-name": [
                 "lowercaseHyphenSeprated",
-                "usage-",
+                "example-",
                 "-widget"
             ],
             "WidgetName": [

@@ -1,0 +1,67 @@
+{
+    "app": {
+        "type": "widget",
+        "input": "",
+        "folderName": [
+            "lowercaseHyphenSeprated",
+            "example-",
+            "-widget"
+        ],
+        "tempFolderPath": "./temp_dir/",
+        "refrenceSourcePath": "./refrence_dir/",
+        "destinationSourcePath": "./destination_dir/",
+        "replaceFileName": {
+            "app": {
+                "index.html": "",
+                "index.tsx": ""
+            },
+            "components": {
+                "ComponentName.tsx": [
+                    "camelUpperCase",
+                    "",
+                    ""
+                ]
+            },
+            "styles": {
+                "ComponentName.scss": [
+                    "camelLowerCase",
+                    "_",
+                    ""
+                ],
+                "main.scss": ""
+            },
+            "WidgetName.tsx": [
+                "camelUpperCase",
+                "Example",
+                "Widget"
+            ]
+        },
+        "replaceContent": {
+            "ComponentName": [
+                "camelUpperCase",
+                "",
+                ""
+            ],
+            "componentName": [
+                "camelLowerCase",
+                "",
+                ""
+            ],
+            "widget-folder-name": [
+                "lowercaseHyphenSeprated",
+                "example-",
+                "-widget"
+            ],
+            "WidgetName": [
+                "camelUpperCase",
+                "",
+                ""
+            ],
+            "widgetName": [
+                "camelLowerCase",
+                "",
+                ""
+            ]
+        }
+    }
+}

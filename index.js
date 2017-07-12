@@ -62,8 +62,7 @@ function fsGenerator(configs) {
             copyTempToDest();
             // add tasks to create folder 
             // addWebpackTasks();
-            fse.emptyDirSync(tmpDir);
-            deferred.resolve(':::~~Created new ' + dirType + " / " + dirName + ':::~~');
+            deferred.resolve('successfuly created directory');
         }
         return deferred.promise;
     };
@@ -148,7 +147,6 @@ function fsGenerator(configs) {
             for (var cont in replaceConfig) {
                 var contRegex = new RegExp(cont, 'g');
                 if (e.match(contRegex)) {
-                    console.log(contRegex + " re writing " + replaceConfig[cont][0]);
                     var replaceValue = utils.getReplacableContent(fls.input, replaceConfig[cont]);
                     return replaceValue;
                 }
@@ -172,6 +170,7 @@ function fsGenerator(configs) {
             console.log(':::~~ destination directory created:' + dirName + '~~:::');
         });
         fse.emptyDirSync(tmpDir);
+        console.log(':::~~Created new ' + dirType + " / " + dirName + ':::~~');
     };
     
     /**

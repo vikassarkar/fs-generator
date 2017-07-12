@@ -1,0 +1,19 @@
+{
+    "compilerOptions": {
+        "outDir": "./build",
+        "sourceMap": true,
+        "noImplicitAny": true,
+        "module": "commonjs",
+        "target": "ES6",
+        "jsx": "react",
+        "skipLibCheck": true, 
+        "typeRoots": [ 
+            "./node_modules/@types/"
+        ],
+        "types": ["node", "core-js"]
+    },
+    "include": [
+        "./detination_dir/**/*",
+        "./refrence_dir/**/*"
+    ]
+}

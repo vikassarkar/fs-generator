@@ -1,0 +1,13 @@
+#
+# Created by: Vikas sarkar(Amdocs)
+# date : 2017-07-06
+# 2017 - Bell
+#
+.awcache
+.vscode
+
+.DS_STORE
+node_modules
+npm-debug.log
+destination_dir
+temp_dir
