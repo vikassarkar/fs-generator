@@ -36,6 +36,7 @@ function fsGenerator(configs) {
             tempFolderName = utils.getBaseFolderName(tmpDir);
             refSrcDir = configs[fls]['refrenceSourcePath'];
             contentReplaceRegx = new RegExp(utils.regxContent(configs[fls]['replaceContent']), 'g');
+            console.log(':::~~'+fls+':::~~')
             folderSync(configs[fls])
         }
     };
