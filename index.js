@@ -22,11 +22,12 @@ function fsGenerator(configs) {
     var dirType = "";
     var tempFolderName = "";
     var contentReplaceRegx = new RegExp("", 'g');
+    var replaceContentLength = 0;
 
     /**
      * initilize create directory process
      */
-    var init = function() {
+    var init = function () {
         for (var fls in configs) {
             dirName = utils.folderName(configs[fls]['input'], configs[fls]['folderName']);
             dirType = configs[fls]['type'];
@@ -36,8 +37,11 @@ function fsGenerator(configs) {
             tempFolderName = utils.getBaseFolderName(tmpDir);
             refSrcDir = configs[fls]['refrenceSourcePath'];
             contentReplaceRegx = new RegExp(utils.regxContent(configs[fls]['replaceContent']), 'g');
-            console.log(':::~~'+fls+':::~~')
-            folderSync(configs[fls])
+            if (configs[fls]['replaceContent']) {
+                replaceContentLength = Object.keys(configs[fls]['replaceContent']).length;
+            }
+            console.log(':::~~' + fls + ':::~~');
+            folderSync(configs[fls]);
         }
     };
 
@@ -45,7 +49,7 @@ function fsGenerator(configs) {
      * sync folder to create new directories with provided Configurations
      * @param {*} fls 
      */
-    var folderSync = function(fls) {
+    var folderSync = function (fls) {
         if (fs.existsSync(destFolderDir)) {
             console.log(':::~~' + dirName + ' exists, please pick another name or delete previous to create new~~:::')
             deferred.reject(fls.type + ' exists, please pick another name.');
@@ -71,7 +75,7 @@ function fsGenerator(configs) {
     /**
      * Copy refrence directory in temporary directory
      */
-    var copyRefToTemp = function() {
+    var copyRefToTemp = function () {
         fse.emptyDirSync(tmpDir);
         fse.copySync(refSrcDir, tmpDir, { overwrite: true }, err => {
             if (err) {
@@ -88,13 +92,13 @@ function fsGenerator(configs) {
      * Process temp directory recently copied
      * @param {*} fls 
      */
-    var updateTempSubDirNames = function(fls) {
-        fs.readdirSync(tmpDir).map(function(dir) {
+    var updateTempSubDirNames = function (fls) {
+        fs.readdirSync(tmpDir).map(function (dir) {
 
             var tempFolderPath = path.join(tmpDir, dir);
             if (fs.statSync(tempFolderPath).isDirectory()) {
                 // Process files in tmpDir.
-                fs.readdirSync(tempFolderPath).map(function(file) {
+                fs.readdirSync(tempFolderPath).map(function (file) {
                     processTempFolder(path.join(tempFolderPath, file), fls);
                 });
             } else {
@@ -110,14 +114,16 @@ function fsGenerator(configs) {
      * @param {*} oldPath 
      * @param {*} fls 
      */
-    var processTempFolder = function(oldPath, fls) {
+    var processTempFolder = function (oldPath, fls) {
         console.log(":::~~processing your temp folder and file~~:::");
         var parsedPath = updateFileNamePath(path.parse(oldPath), fls);
         var newPath = path.format(parsedPath);
         fs.renameSync(oldPath, newPath);
-        var oldContent = fs.readFileSync(newPath, 'utf8');
-        var newContent = updateFileContent(oldContent, fls.replaceContent, fls);
-        fs.writeFileSync(newPath, newContent);
+        if (replaceContentLength > 0) {
+            var oldContent = fs.readFileSync(newPath, 'utf8');
+            var newContent = updateFileContent(oldContent, fls.replaceContent, fls);
+            fs.writeFileSync(newPath, newContent);
+        }
     }
 
     /**
@@ -125,12 +131,19 @@ function fsGenerator(configs) {
      * @param {*} parsedPath 
      * @param {*} fls 
      */
-    var updateFileNamePath = function(parsedPath, fls) {
+    var updateFileNamePath = function (parsedPath, fls) {
         // parsedPath.dir, parsedPath.base, parsedPath.ext, parsedPath.name
         var newName = "";
         var fileConfigs = "";
         parsedPath['folderName'] = utils.getBaseFolderName(parsedPath.dir) != tempFolderName ? utils.getBaseFolderName(parsedPath.dir) : "";
-        fileConfigs = parsedPath.folderName ? fls.replaceFileName[parsedPath.folderName][parsedPath.base] : fls.replaceFileName[parsedPath.base];
+        //fileConfigs = parsedPath.folderName ? fls.replaceFileName[parsedPath.folderName][parsedPath.base] : fls.replaceFileName[parsedPath.base];
+        if (parsedPath.folderName && fls.replaceFileName[parsedPath.folderName] && fls.replaceFileName[parsedPath.folderName][parsedPath.base]) {
+            fileConfigs = fls.replaceFileName[parsedPath.folderName][parsedPath.base];
+        } else if (fls.replaceFileName[parsedPath.base]) {
+            fileConfigs = fls.replaceFileName[parsedPath.base];
+        } else {
+            fileConfigs = []
+        }
         newName = utils.getupdatedFileName(parsedPath.name, fileConfigs, fls.input);
         parsedPath.base = newName + parsedPath.ext;
         parsedPath.name = newName;
@@ -143,8 +156,8 @@ function fsGenerator(configs) {
      * @param {*} replaceConfig 
      * @param {*} fls 
      */
-    var updateFileContent = function(oldContent, replaceConfig, fls) {
-        var newContent = oldContent.replace(contentReplaceRegx, function(e) {
+    var updateFileContent = function (oldContent, replaceConfig, fls) {
+        var newContent = oldContent.replace(contentReplaceRegx, function (e) {
             for (var cont in replaceConfig) {
                 var contRegex = new RegExp(cont, 'g');
                 if (e.match(contRegex)) {
@@ -159,7 +172,7 @@ function fsGenerator(configs) {
     /**
      * copy data from writed temp directory to destination drive
      */
-    var copyTempToDest = function() {
+    var copyTempToDest = function () {
         fse.emptyDirSync(destFolderDir);
         fse.copySync(tmpDir, destFolderDir, { overwrite: true }, err => {
             if (err) {
@@ -173,7 +186,7 @@ function fsGenerator(configs) {
         fse.emptyDirSync(tmpDir);
         console.log(':::~~Created new ' + dirType + " / " + dirName + ':::~~');
     };
-    
+
     /**
      * Call fsGEnerator init
      */

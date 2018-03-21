@@ -8,14 +8,18 @@ var alphaOnly = /[^a-zA-Z]/g;
  * regex content for mapping key in files
  * @param {*} input - name provided for folder name 
  */
-var regxContent = function(input) {
+var regxContent = function (input) {
     var rxArray = [];
     var rxContent = "";
     var rxLength = _.size(input);
     for (var rx in input) {
         rxArray.push(rx);
     }
-    rxContent = rxArray.join('|');
+    if (rxLength > 1) {
+        rxContent = rxArray.join('|');
+    } else {
+        rxContent = rxArray.join('');
+    }
     return rxContent;
 };
 
@@ -23,7 +27,7 @@ var regxContent = function(input) {
  * capitalize string passed
  * @param {*} string 
  */
-var capitalize = function(string) {
+var capitalize = function (string) {
     return string.charAt(0).toUpperCase() + string.slice(1).toLowerCase();
 };
 
@@ -32,7 +36,7 @@ var capitalize = function(string) {
  * @param {*} input - name provided for folder name 
  * @param {*} folderName - configs provided for creating folder name 
  */
-var folderName = function(input, folderName) {
+var folderName = function (input, folderName) {
     var result = input.replace(/([A-Z]+)/g, ",$1").toLowerCase().replace(/^,/, "");
     var resultArray = result.split(",");
     var updatedInput = this[folderName[0]](resultArray, folderName[1], folderName[2])
@@ -45,7 +49,7 @@ var folderName = function(input, folderName) {
  * @param {*} prefix 
  * @param {*} suffix 
  */
-var camelUpperCase = function(inputArray, prefix, suffix) {
+var camelUpperCase = function (inputArray, prefix, suffix) {
     var updatedInput = prefix;
     for (var i in inputArray) {
         updatedInput += capitalize(inputArray[i]);
@@ -60,7 +64,7 @@ var camelUpperCase = function(inputArray, prefix, suffix) {
  * @param {*} prefix 
  * @param {*} suffix
  */
-var camelLowerCase = function(inputArray, prefix, suffix) {
+var camelLowerCase = function (inputArray, prefix, suffix) {
     var updatedInput = prefix;
     for (var i in inputArray) {
         if (i == 0) {
@@ -79,7 +83,7 @@ var camelLowerCase = function(inputArray, prefix, suffix) {
  * @param {*} prefix 
  * @param {*} suffix
  */
-var lowercaseHyphenSeprated = function(inputArray, prefix, suffix) {
+var lowercaseHyphenSeprated = function (inputArray, prefix, suffix) {
     var pre = prefix ? (prefix.replace(alphaOnly, '')).toLowerCase() + "-" : "";
     var suf = suffix ? "-" + (suffix.replace(alphaOnly, '')).toLowerCase() : "";
     var updatedInput = pre;
@@ -100,7 +104,7 @@ var lowercaseHyphenSeprated = function(inputArray, prefix, suffix) {
  * @param {*} prefix 
  * @param {*} suffix
  */
-var uppercaseHyphenSeprated = function(inputArray, prefix, suffix) {
+var uppercaseHyphenSeprated = function (inputArray, prefix, suffix) {
     var pre = prefix ? capitalize(prefix.replace(alphaOnly, '')) + "-" : "";
     var suf = suffix ? "-" + capitalize(suffix.replace(alphaOnly, '')) : "";
     var updatedInput = pre;
@@ -119,7 +123,7 @@ var uppercaseHyphenSeprated = function(inputArray, prefix, suffix) {
  * get base folder name of dir with path
  * @param {*} newPath 
  */
-var getBaseFolderName = function(newPath) {
+var getBaseFolderName = function (newPath) {
     var pathArray = newPath.split("\\");
     return pathArray[pathArray.length - 1]
 };
@@ -130,7 +134,7 @@ var getBaseFolderName = function(newPath) {
  * @param {*} configs
  * @param {*} input 
  */
-var getupdatedFileName = function(tempName, configs, input) {
+var getupdatedFileName = function (tempName, configs, input) {
     var result = input.replace(/([A-Z]+)/g, ",$1").toLowerCase().replace(/^,/, "");
     var resultArray = result.split(",");
     if (configs && configs.length > 0) {
@@ -146,7 +150,7 @@ var getupdatedFileName = function(tempName, configs, input) {
  * @param {*} tempName
  * @param {*} contentConfig 
  */
-var getReplacableContent = function(tempName, contentConfig) {
+var getReplacableContent = function (tempName, contentConfig) {
     var result = tempName.replace(/([A-Z]+)/g, ",$1").toLowerCase().replace(/^,/, "");
     var resultArray = result.split(",");
     if (contentConfig && contentConfig.length > 0) {
