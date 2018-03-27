@@ -1,6 +1,6 @@
 {
   "name": "fs-generator",
-  "version": "3.0.1",
+  "version": "3.0.2",
   "description": "Create your folders automatically, on single command.",
   "main": "index.js",
   "scripts": {

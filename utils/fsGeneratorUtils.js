@@ -46,6 +46,18 @@ var folderName = function (input, folderName) {
 /**
  * convert string passed in uppercase as first letter and camel casing it
  * @param {*} inputArray 
+ * @param {*} replacer 
+ * @param {*} suffix 
+ */
+var replaceText = function (inputArray, replacer, suffix) {
+    var updatedInput = replacer;
+    updatedInput += suffix;
+    return updatedInput;
+};
+
+/**
+ * convert string passed in uppercase as first letter and camel casing it
+ * @param {*} inputArray 
  * @param {*} prefix 
  * @param {*} suffix 
  */
@@ -129,6 +141,20 @@ var getBaseFolderName = function (newPath) {
 };
 
 /**
+ * get base folder name of dir with path
+ * @param {*} newPath 
+ */
+var getFirstFolderName = function (newPath, tempFolderName) {
+    var pathArray = newPath.split("\\");
+    var tempFolderIndex = pathArray.indexOf(tempFolderName);
+    if(pathArray.length -1 === tempFolderIndex){
+        return tempFolderName;
+    }else{
+        return pathArray[tempFolderIndex + 1]
+    }
+};
+
+/**
  * update file name as provided in config
  * @param {*} tempName
  * @param {*} configs
@@ -168,11 +194,13 @@ module.exports = {
     regxContent: regxContent,
     capitalize: capitalize,
     folderName: folderName,
+    replaceText:replaceText,
     camelUpperCase: camelUpperCase,
     camelLowerCase: camelLowerCase,
     lowercaseHyphenSeprated: lowercaseHyphenSeprated,
     uppercaseHyphenSeprated: uppercaseHyphenSeprated,
     getBaseFolderName: getBaseFolderName,
+    getFirstFolderName:getFirstFolderName,
     getupdatedFileName: getupdatedFileName,
     getReplacableContent: getReplacableContent
 }

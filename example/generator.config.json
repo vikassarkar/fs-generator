@@ -13,7 +13,14 @@
         "replaceFileName": {
             "app": {
                 "index.html": "",
-                "index.tsx": ""
+                "index.tsx": "",
+                "any":{
+                    "BootIndex.tsx":[
+                        "camelUpperCase",
+                        "Example",
+                        "Widget"
+                   ]
+                }
             },
             "components": {
                 "ComponentName.tsx": [
@@ -54,8 +61,8 @@
             ],
             "WidgetName": [
                 "camelUpperCase",
-                "",
-                ""
+                "Example",
+                "Widget"
             ],
             "widgetName": [
                 "camelLowerCase",

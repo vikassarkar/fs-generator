@@ -23,6 +23,8 @@ function fsGenerator(configs) {
     var tempFolderName = "";
     var contentReplaceRegx = new RegExp("", 'g');
     var replaceContentLength = 0;
+    var ignoreExtentions=[];
+    var ignoreFolders=[];
 
     /**
      * initilize create directory process
@@ -36,6 +38,8 @@ function fsGenerator(configs) {
             tmpDir = configs[fls]['tempFolderPath'];
             tempFolderName = utils.getBaseFolderName(tmpDir);
             refSrcDir = configs[fls]['refrenceSourcePath'];
+            ignoreExtentions = configs[fls]['ignoreExts'] || [];
+            ignoreFolders = configs[fls]['ignoreFolders'] || [];
             contentReplaceRegx = new RegExp(utils.regxContent(configs[fls]['replaceContent']), 'g');
             if (configs[fls]['replaceContent']) {
                 replaceContentLength = Object.keys(configs[fls]['replaceContent']).length;
@@ -94,20 +98,31 @@ function fsGenerator(configs) {
      */
     var updateTempSubDirNames = function (fls) {
         fs.readdirSync(tmpDir).map(function (dir) {
-
             var tempFolderPath = path.join(tmpDir, dir);
             if (fs.statSync(tempFolderPath).isDirectory()) {
                 // Process files in tmpDir.
-                fs.readdirSync(tempFolderPath).map(function (file) {
-                    processTempFolder(path.join(tempFolderPath, file), fls);
-                });
+                nestedDirectory(tempFolderPath, fls);
             } else {
                 // This is a file - just process it.
                 processTempFolder(tempFolderPath, fls);
             }
-
         });
     };
+
+    /**
+     * Process nested folders in temp directory recently copied
+     * @param {*} tempFolderPath 
+     */
+    var nestedDirectory = function (tempFolderPath, fls) {
+        fs.readdirSync(tempFolderPath).map(function (dir) {
+            var newTempFolderPath = path.join(tempFolderPath, dir);
+            if (fs.statSync(newTempFolderPath).isDirectory()) {
+                nestedDirectory(newTempFolderPath, fls);
+            } else {
+                processTempFolder(newTempFolderPath, fls);
+            }
+        });
+    }
 
     /**
      * Process files that were recently copied in temp directory
@@ -115,14 +130,18 @@ function fsGenerator(configs) {
      * @param {*} fls 
      */
     var processTempFolder = function (oldPath, fls) {
-        console.log(":::~~processing your temp folder and file~~:::");
+        console.log(":::~~processing your temp folder and file~~:::"+oldPath);
         var parsedPath = updateFileNamePath(path.parse(oldPath), fls);
         var newPath = path.format(parsedPath);
+        var firstFolderName = utils.getFirstFolderName(oldPath, tempFolderName);
         fs.renameSync(oldPath, newPath);
-        if (replaceContentLength > 0) {
+        if (replaceContentLength > 0 && ignoreExtentions.indexOf(parsedPath.ext) < 0 && ignoreFolders.indexOf(firstFolderName) < 0) {
+            console.log(":::~~writing your temp file~~:::"+newPath);
             var oldContent = fs.readFileSync(newPath, 'utf8');
             var newContent = updateFileContent(oldContent, fls.replaceContent, fls);
             fs.writeFileSync(newPath, newContent);
+        }else{
+            console.log(":::~~skipping writing of your temp file~~:::"+newPath);
         }
     }
 
@@ -135,20 +154,55 @@ function fsGenerator(configs) {
         // parsedPath.dir, parsedPath.base, parsedPath.ext, parsedPath.name
         var newName = "";
         var fileConfigs = "";
+        var folderDirArray = getNestedFolderName(parsedPath);
         parsedPath['folderName'] = utils.getBaseFolderName(parsedPath.dir) != tempFolderName ? utils.getBaseFolderName(parsedPath.dir) : "";
         //fileConfigs = parsedPath.folderName ? fls.replaceFileName[parsedPath.folderName][parsedPath.base] : fls.replaceFileName[parsedPath.base];
-        if (parsedPath.folderName && fls.replaceFileName[parsedPath.folderName] && fls.replaceFileName[parsedPath.folderName][parsedPath.base]) {
-            fileConfigs = fls.replaceFileName[parsedPath.folderName][parsedPath.base];
-        } else if (fls.replaceFileName[parsedPath.base]) {
+        if (folderDirArray == "base" && fls.replaceFileName[parsedPath.base]) {
             fileConfigs = fls.replaceFileName[parsedPath.base];
+        } else if (Array.isArray(folderDirArray)) {
+            var replaceFileNameArray = fls.replaceFileName;
+            for (var i in folderDirArray) {
+                if (replaceFileNameArray[folderDirArray[i]] && Object.keys(replaceFileNameArray[folderDirArray[i]]).length > 0) {
+                    replaceFileNameArray = replaceFileNameArray[folderDirArray[i]];
+                } else {
+                    replaceFileNameArray = [];
+                    break;
+                }
+            }
+            if (replaceFileNameArray && replaceFileNameArray[parsedPath.base]) {
+                fileConfigs = replaceFileNameArray[parsedPath.base];
+            } else {
+                fileConfigs = [];
+            }
         } else {
             fileConfigs = []
         }
+        console.log(":::~~Configurations from replaceFileName~~:::" +fileConfigs);
         newName = utils.getupdatedFileName(parsedPath.name, fileConfigs, fls.input);
         parsedPath.base = newName + parsedPath.ext;
         parsedPath.name = newName;
         return parsedPath;
     };
+
+    /**
+     * get array of folders from base temp path
+     * @param {*} parsedPath 
+     */
+    var getNestedFolderName = function (parsedPath) {
+        var tempPathArray = tmpDir.split("\\");
+        var parsedPathArray = parsedPath.dir.split("\\");
+        if (parseInt(tempPathArray.length) === parseInt(parsedPathArray.length)) {
+            return "base";
+        } else if (parseInt(tempPathArray.length) < parseInt(parsedPathArray.length)) {
+            var folderNameArray = [];
+            for (var i in parsedPathArray) {
+                if (i > parseInt(tempPathArray.length) - 1) {
+                    folderNameArray.push(parsedPathArray[i]);
+                }
+            }
+            return folderNameArray;
+        }
+    }
 
     /**
      * update content of refrence directory files as per config provided by replaceContent key
